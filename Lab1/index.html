@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="style.css" />
+		<title>Add User</title>
+	</head>
+
+	<body>
+		<form>
+			<div id="title">User data entry form</div>
+			Name:
+			<input
+				type="text"
+				name="name"
+				id="name"
+				autocomplete="off"
+				autocapitalize="off"
+				spellcheck="false"
+				autofocus="on"
+			/><br />
+			Address:
+			<input
+				type="text"
+				name="address"
+				id="address"
+				autocomplete="off"
+				autocapitalize="off"
+				spellcheck="false"
+			/><br />
+			Date of Birth:
+			<input
+				type="text"
+				name="dob"
+				id="dob"
+				placeholder="yyyy-mm-dd"
+				autocomplete="off"
+				autocapitalize="off"
+				spellcheck="false"
+			/><br />
+			<div id="btn">
+				<button id="save">Save Data</button>
+				<button id="clear" type="button">Clear Data</button>
+				<button id="display">Display Data</button>
+			</div>
+			<div id="msg"></div>
+			<div id="table_div"></div>
+		</form>
+		<script>
+			//selectors
+			const form = document.querySelector("form");
+			const save = document.querySelector("#save");
+			const display = document.querySelector("#display");
+			const msg = document.querySelector("#msg");
+			const table_div = document.querySelector("#table_div");
+			const dob = document.querySelector("#dob");  //added
+			const name = document.querySelector("#name");  //added
+			const address = document.querySelector("#address");  //added
+			const clearBtn = document.querySelector("#clear");  //added
+			let table = document.createElement("table");
+			let thead = document.createElement("thead");
+			let tbody = document.createElement("tbody");
+			//end selectors
+
+			//event listener to clear the form
+			clearBtn.addEventListener("click", clearFormInput);
+
+			table.appendChild(thead);
+			table.appendChild(tbody);
+			save.addEventListener("click", (e) => {
+				e.preventDefault();
+				if (!isAllLetters(name.value)) {
+					notificationMessage(msg, "Numbers not allowed!");
+					return;
+				}
+				
+				//CHECK THE DATE FORMAT				
+				if (!checkDateFormat(dob.value)) {
+					msg.style.padding = "0.25rem";
+					notificationMessage(msg, "Invalid date!");
+					return;
+				}
+				
+				
+				
+				let formData = new FormData(form);
+
+				fetch("insert.php", {
+					method: "POST",
+					body: formData,
+				})
+					.then((res) => res.json())
+					.then((data) => {
+						if (data) {
+							notificationMessage(msg, "Record saved successfully!");
+							clearFormInput();
+						}
+					});
+			});
+			display.addEventListener("click", (e) => {
+				e.preventDefault();
+				fetch("display.php")
+					.then((res) => res.json())
+					.then((data) => {
+						removeAllChildNodes(thead);
+						removeAllChildNodes(tbody);
+						makeTableHeader(["Name", "Address", "Date of Birth"]);
+						data.forEach((element) => {
+							makeTableDataRow([element.name, element.address, element.dob]);
+						});
+						table_div.appendChild(table);
+					});
+			});
+			/*
+        This function accepts an array of the column headings
+        and create a row to be added to the table in with the 
+        column heading
+        */
+			function makeTableHeader(coloumns) {
+				let header_row = document.createElement("tr");
+				coloumns.forEach((item) => {
+					let heading = document.createElement("th");
+					heading.innerHTML = item;
+					header_row.appendChild(heading);
+				});
+				thead.appendChild(header_row);
+			}
+			/*
+        This function accepts an array of the row data
+        and create a row to be added to the table in with the 
+        record data
+        */
+			function makeTableDataRow(row_data) {
+				let data_row = document.createElement("tr");
+				row_data.forEach((item) => {
+					let row = document.createElement("td");
+					row.innerHTML = item;
+					data_row.appendChild(row);
+				});
+				tbody.appendChild(data_row);
+			}
+			function removeAllChildNodes(parent) {
+				while (parent.firstChild) parent.removeChild(parent.firstChild);
+			}
+
+			// Added functions
+
+
+
+             //CHECK ISALLLETTERS IMPLEMENTAION
+			function isAllLetters(str) {
+				for (let c of str) {
+					if (c >= "0" && c <= "9") {
+						return false;
+					}
+				}
+				return true;
+			}
+			
+			//CHECK ISDIGIT FORMAT IMPLEMENTAION
+			function isDigit(str) {
+				for (let c of str) {
+					if (c == "-") {
+						continue;
+					}
+					if (c < "0" || c > "9") {
+						alert("one");
+						return false;
+					}
+				}
+				return true;
+			}
+
+			
+			//CHECK DATE FORMAT IMPLEMENTAION
+			function checkDateFormat(date) {
+				if (date.length != 10) {
+					return false;
+				}
+				if (!isDigit(date)) {
+					return false;
+				}
+				if (date[4] != "-" || date[7] != "-") {
+					return false;
+				}
+				let month = parseInt(date.substring(5, 7));
+				if (month > 12) return false;
+				let day = parseInt(date.substring(8));
+				if (day > 31) return false;
+
+				return true;
+			}
+
+
+			//MY NOTIFICATION MESSAGES 
+			function notificationMessage(msg, notification) {
+				msg.innerHTML = notification;
+				msg.style.padding = "0.25rem";
+				setTimeout(() => {
+					msg.innerHTML = " ";
+					msg.style.padding = "0";
+				}, 2000);
+			}
+			
+			//clEAR FOR INPUT
+			function clearFormInput() {
+				name.value = ""; //if u leave a space it leaves a white character as the value
+				dob.value = ""; //if u leave a space it leaves a white character as the value
+				address.value = ""; //if u leave a space it leaves a white character as the value
+			}
+			// Added functions
+		</script>
+	</body>
+</html>
