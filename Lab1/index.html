@@ -55,10 +55,10 @@
 			const display = document.querySelector("#display");
 			const msg = document.querySelector("#msg");
 			const table_div = document.querySelector("#table_div");
-			const dob = document.querySelector("#dob");  //added
-			const name = document.querySelector("#name");  //added
-			const address = document.querySelector("#address");  //added
-			const clearBtn = document.querySelector("#clear");  //added
+			const dob = document.querySelector("#dob"); //date of birth
+			const name = document.querySelector("#name"); //name
+			const address = document.querySelector("#address"); //address
+			const clearBtn = document.querySelector("#clear");
 			let table = document.createElement("table");
 			let thead = document.createElement("thead");
 			let tbody = document.createElement("tbody");
@@ -70,21 +70,25 @@
 			table.appendChild(thead);
 			table.appendChild(tbody);
 			save.addEventListener("click", (e) => {
-				e.preventDefault();
+				e.preventDefault(); // this prevents the browser from submitting the form upon click the button
+				//STEP ONE
 				if (!isAllLetters(name.value)) {
 					notificationMessage(msg, "Numbers not allowed!");
+					//passed in the msg variable as the first parameter and the string as the second parameter
+					//see function definition
+
 					return;
 				}
-				
-				//CHECK THE DATE FORMAT				
 				if (!checkDateFormat(dob.value)) {
-					msg.style.padding = "0.25rem";
+					//executes if the date is invalid
+					//remember, if statement will only evaluate the block if the condition is true.
+					//in this if check we are checking to see if the validation fails. i.e if it is false using the negation "!".
+					//if the validation is false then the if statement evaluates to true.
 					notificationMessage(msg, "Invalid date!");
 					return;
 				}
-				
-				
-				
+				//Check date Format
+
 				let formData = new FormData(form);
 
 				fetch("insert.php", {
@@ -114,10 +118,10 @@
 					});
 			});
 			/*
-        This function accepts an array of the column headings
-        and create a row to be added to the table in with the 
-        column heading
-        */
+			     This function accepts an array of the column headings
+			     and create a row to be added to the table in with the
+			     column heading
+			     */
 			function makeTableHeader(coloumns) {
 				let header_row = document.createElement("tr");
 				coloumns.forEach((item) => {
@@ -128,10 +132,10 @@
 				thead.appendChild(header_row);
 			}
 			/*
-        This function accepts an array of the row data
-        and create a row to be added to the table in with the 
-        record data
-        */
+			     This function accepts an array of the row data
+			     and create a row to be added to the table in with the
+			     record data
+			     */
 			function makeTableDataRow(row_data) {
 				let data_row = document.createElement("tr");
 				row_data.forEach((item) => {
@@ -147,54 +151,60 @@
 
 			// Added functions
 
-
-
-             //CHECK ISALLLETTERS IMPLEMENTAION
 			function isAllLetters(str) {
+				//check each ch in the string and evaluate the if statement
 				for (let c of str) {
 					if (c >= "0" && c <= "9") {
 						return false;
 					}
-				}
-				return true;
-			}
-			
-			//CHECK ISDIGIT FORMAT IMPLEMENTAION
-			function isDigit(str) {
-				for (let c of str) {
-					if (c == "-") {
-						continue;
-					}
-					if (c < "0" || c > "9") {
-						alert("one");
-						return false;
-					}
-				}
+				} //end for loop
 				return true;
 			}
 
-			
-			//CHECK DATE FORMAT IMPLEMENTAION
 			function checkDateFormat(date) {
+				let year = date.substring(0, 4); //strip the year from the string
+				let month = date.substring(5, 7); //strip the month from the string
+				let day = date.substring(8, 10); //strip the day from the string
+
 				if (date.length != 10) {
-					return false;
+					return false; // it must equal 10 invalid would be more or less than
 				}
 				if (!isDigit(date)) {
 					return false;
 				}
-				if (date[4] != "-" || date[7] != "-") {
+				if (
+					date[4] != "-" ||
+					date[7] != "-" ||
+					!isDigit(year) ||
+					!isDigit(month) ||
+					!isDigit(day)
+				) {
 					return false;
 				}
-				let month = parseInt(date.substring(5, 7));
-				if (month > 12) return false;
-				let day = parseInt(date.substring(8));
-				if (day > 31) return false;
-
+				if (parseInt(month) > 12) return false; //cast string to a number
+				if (parseInt(day) > 31) return false; //cast string to a number
+				return true;
+			}
+			function isDigit(str) {
+				let count = 0;
+				for (let c of str) {
+					//use 4 and 7 because it matches the index of the dashes in the dob field
+					if (count == 4 || count == 7) {
+						if (c == "-") {
+							count++; //increment the count before jumping to the next iteration
+							continue;
+						} else {
+							return false;
+						}
+					}
+					if (c < "0" || c > "9") {
+						return false;
+					}
+					count++; //increment the counter
+				}
 				return true;
 			}
 
-
-			//MY NOTIFICATION MESSAGES 
 			function notificationMessage(msg, notification) {
 				msg.innerHTML = notification;
 				msg.style.padding = "0.25rem";
@@ -203,13 +213,12 @@
 					msg.style.padding = "0";
 				}, 2000);
 			}
-			
-			//clEAR FOR INPUT
 			function clearFormInput() {
-				name.value = ""; //if u leave a space it leaves a white character as the value
-				dob.value = ""; //if u leave a space it leaves a white character as the value
-				address.value = ""; //if u leave a space it leaves a white character as the value
+				name.value = "";
+				dob.value = "";
+				address.value = "";
 			}
+
 			// Added functions
 		</script>
 	</body>
