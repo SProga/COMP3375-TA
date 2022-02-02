@@ -76,7 +76,10 @@
 					notificationMessage(msg, "Numbers not allowed!");
 					//passed in the msg variable as the first parameter and the string as the second parameter
 					//see function definition
-
+					return;
+				}
+				if (address.value.length == 0) {
+					notificationMessage(msg, "Address cannot be empty");
 					return;
 				}
 				if (!checkDateFormat(dob.value)) {
@@ -194,7 +197,7 @@
 							count++; //increment the count before jumping to the next iteration
 							continue;
 						} else {
-							return false;
+							return false; //return false if index 4 or 7 is not a dash
 						}
 					}
 					if (c < "0" || c > "9") {
@@ -202,7 +205,7 @@
 					}
 					count++; //increment the counter
 				}
-				return true;
+				return true; //validation pass, return true;
 			}
 
 			function notificationMessage(msg, notification) {
