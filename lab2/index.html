@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<style>
+			table {
+				border-collapse: collapse;
+				border-spacing: 0;
+				width: 50%;
+				margin-top: 1rem;
+			}
+
+			th,
+			td {
+				padding: 10px 20px;
+				border: 1px solid rgb(156, 153, 153);
+			}
+
+			td {
+				text-align: center;
+			}
+
+			select {
+				padding: 5px 30px;
+				margin-right: 10px;
+			}
+
+			select:focus {
+				outline: none;
+			}
+
+			.red {
+				color: white;
+				background-color: red;
+			}
+
+			.green {
+				color: white;
+				background-color: green;
+			}
+		</style>
+	</head>
+
+	<body>
+		<select id="thefunc">
+			<option value="myFunctionOne">Function One</option>
+			<option value="myFunctionTwo">Function Two</option>
+		</select>
+		<input type="file" />
+		<div id="results"></div>
+
+		<script src="index.js"></script>
+		<script>
+			function myFunctionOne(you, date) {
+				if (you <= 2 || date <= 2) {
+					return 0;
+				} else if (you >= 8 || date >= 8) {
+					return 2;
+				} else {
+					return 1;
+				}
+			}
+			function myFunctionTwo(str, num) {
+				//(condition)  ? true : false;
+				let res = str.length < 3 ? str : str.substring(0, 3);
+
+				for (let x = 0; x < num; x++) {
+					res2 += res;
+				}
+				return res2;
+			}
+		</script>
+	</body>
+</html>
